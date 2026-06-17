@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pichi's Lounge | Premium Matcha Boutique</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Elegant Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Core Variable Definitions --- */
+        :root {
+            --color-bg-base: #0c140e;
+            --color-sage: #8da390;
+            --color-matcha: #435b47;
+            --color-matcha-light: #5a7a60;
+            --color-cream: #f4f7f4;
+            --color-gold: #d4af37;
+            --color-gold-hover: #f3e5ab;
+            
+            /* Glassmorphism Presets */
+            --glass-bg: rgba(25, 38, 28, 0.45);
+            --glass-border: rgba(212, 175, 55, 0.18);
+            --glass-shadow: rgba(0, 0, 0, 0.5);
+            
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* --- Document Settings & Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+            background-color: var(--color-bg-base);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--color-cream);
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-color: var(--color-bg-base);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .text-center { text-align: center; }
+
+        /* --- Ambient Light Background Blobs --- */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.22;
+        }
+        .glow-1 { top: -10%; right: -10%; width: 500px; height: 500px; background: var(--color-matcha-light); }
+        .glow-2 { bottom: 10%; left: -10%; width: 600px; height: 600px; background: var(--color-matcha); }
+
+        /* --- Coffee Pouring Custom Preloader --- */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-base);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .pour-container {
+            position: relative;
+            width: 120px;
+            height: 180px;
+            margin-bottom: 2rem;
+        }
+
+        .stream {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 0;
+            background: linear-gradient(to bottom, var(--color-gold), #6f4e37);
+            border-radius: 3px;
+            animation: pourStream 1s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .cup {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--glass-border);
+            border-radius: 4px 4px 25px 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .cup::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            right: -14px;
+            width: 16px;
+            height: 25px;
+            border: 2px solid var(--glass-border);
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: linear-gradient(to top, #4a3319, #6f4e37);
+            animation: fillCup 2.2s forwards 0.8s ease-in-out;
+        }
+
+        @keyframes pourStream {
+            0% { height: 0; }
+            100% { height: 110px; }
+        }
+
+        @keyframes fillCup {
+            0% { height: 0; }
+            100% { height: 85%; }
+        }
+
+        .loader-logo {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: var(--color-gold);
+            text-align: center;
+        }
+
+        /* --- Premium Floating Navigation --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(12, 20, 14, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.4s ease;
+        }
+        .navbar.scrolled {
+            padding: 0.3rem 0;
+            background: rgba(12, 20, 14, 0.92);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            color: var(--color-cream);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+        .nav-link {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(244, 247, 244, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active { color: var(--color-gold); }
+        
+        .nav-cart-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-cream);
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        .nav-cart-btn:hover { color: var(--color-gold); }
+        .nav-cart-badge {
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            background: var(--color-gold);
+            color: var(--color-bg-base);
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; }
+        .mobile-toggle .bar { display: block; width: 25px; height: 2px; margin: 5px auto; background-color: var(--color-cream); transition: all 0.3s ease; }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 1.5rem;
+            position: relative;
+        }
+        .hero-content { max-width: 850px; margin-top: 4rem; }
+        .hero-subtitle { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 6px; color: var(--color-gold); margin-bottom: 1.5rem; display: inline-block; }
+        .hero-title { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 400; line-height: 1.15; margin-bottom: 2rem; letter-spacing: -0.5px; }
+        .hero-description { font-size: 1.15rem; color: var(--color-sage); font-weight: 300; max-width: 600px; margin: 0 auto 3rem auto; }
+        .hero-actions { display: flex; justify-content: center; gap: 1.5rem; }
+
+        /* Buttons */
+        .btn { display: inline-block; padding: 1rem 2.2rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; text-decoration: none; border-radius: 4px; transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease; }
+        .btn-primary { background: var(--color-gold); color: var(--color-bg-base); box-shadow: 0 4px 20px rgba(214, 175, 55, 0.2); border: none; cursor: pointer; }
+        .btn-primary:hover { background: var(--color-gold-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(214, 175, 55, 0.35); }
+        .btn-secondary { border: 1px solid rgba(255, 255, 255, 0.2); color: var(--color-cream); backdrop-filter: blur(10px); background: rgba(255,255,255,0.02); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--color-gold); transform: translateY(-2px); }
+
+        /* --- Shared Structure Elements --- */
+        .section-tag { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 4px; color: var(--color-gold); margin-bottom: 0.75rem; display: block; }
+        .section-title { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 400; margin-bottom: 1.5rem; }
+        .section-desc { color: var(--color-sage); max-width: 500px; margin: 0 auto 3.5rem auto; }
+
+        /* --- About Section Glass Card --- */
+        .about-section { padding: 8rem 0; }
+        .about-glass-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 4rem; box-shadow: 0 30px 70px var(--glass-shadow); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
+        .about-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; align-items: center; }
+        .about-text p { color: var(--color-sage); margin-bottom: 1.5rem; font-size: 1.05rem; }
+        .highlight-text { font-family: var(--font-serif); font-size: 1.8rem; color: var(--color-gold); font-style: italic; margin-top: 2rem; }
+        .about-image-wrapper { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .about-img { width: 100%; height: 400px; object-fit: cover; transition: transform 0.8s ease; }
+        .about-glass-card:hover .about-img { transform: scale(1.04); }
+
+        /* --- Menu Section Layout --- */
+        .menu-section { padding: 8rem 0; }
+        .menu-filters { display: flex; justify-content: center; gap: 1rem; margin-bottom: 4.5rem; flex-wrap: wrap; }
+        .filter-btn { background: transparent; border: 1px solid rgba(255, 255, 255, 0.1); color: var(--color-sage); padding: 0.75rem 1.8rem; font-size: 0.85rem; letter-spacing: 1px; border-radius: 30px; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn:hover, .filter-btn.active { background: var(--glass-bg); border-color: var(--color-gold); color: var(--color-gold); box-shadow: 0 4px 15px rgba(214, 175, 55, 0.15); }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2.5rem; }
+
+        /* Luxurious Card Glassmorphism */
+        .menu-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px var(--glass-shadow);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1), border-color 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .menu-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(212, 175, 55, 0.45);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+        .card-img-container { position: relative; width: 100%; height: 240px; overflow: hidden; }
+        .menu-item-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+        .menu-card:hover .menu-item-img { transform: scale(1.06); }
+        .item-tag { position: absolute; top: 1.2rem; left: 1.2rem; background: rgba(12, 20, 14, 0.85); backdrop-filter: blur(10px); padding: 0.4rem 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); color: var(--color-gold); }
+
+        .card-body { padding: 2rem; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; gap: 1.2rem; }
+        .card-header-row { display: flex; justify-content: space-between; align-items: baseline; }
+        .item-name { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; }
+        .item-price { font-family: var(--font-sans); color: var(--color-gold); font-weight: 600; font-size: 1.15rem; }
+        .item-description { color: var(--color-sage); font-size: 0.92rem; font-weight: 300; line-height: 1.6; }
+        
+        .add-to-tray-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--color-cream);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .menu-card:hover .add-to-tray-btn {
+            background: rgba(214, 175, 55, 0.1);
+            border-color: var(--color-gold);
+            color: var(--color-gold);
+        }
+        .add-to-tray-btn:hover {
+            background: var(--color-gold) !important;
+            color: var(--color-bg-base) !important;
+        }
+
+        /* --- Slide-out Shopping Drawer --- */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: rgba(12, 20, 14, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-left: 1px solid var(--glass-border);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+            transition: right 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .cart-sidebar.active { right: 0; }
+        
+        .cart-header { padding: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .cart-header h3 { font-family: var(--font-serif); font-size: 1.6rem; }
+        .close-cart-btn { background: transparent; border: none; color: var(--color-sage); font-size: 1.3rem; cursor: pointer; }
+        
+        .cart-items { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .cart-empty { text-align: center; color: var(--color-sage); margin: auto; }
+        .cart-empty i { font-size: 2.5rem; color: var(--color-gold); margin-bottom: 1rem; opacity: 0.4; }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .cart-item-details h4 { font-family: var(--font-serif); font-size: 1.2rem; }
+        .cart-item-details p { color: var(--color-gold); font-weight: 600; font-size: 0.95rem; }
+        
+        .cart-item-ctrls { display: flex; align-items: center; gap: 0.8rem; background: rgba(0,0,0,0.2); padding: 0.2rem; border-radius: 20px; }
+        .cart-ctrl-btn { background: transparent; border: none; color: var(--color-cream); width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .cart-ctrl-btn:hover { background: var(--color-matcha); }
+        
+        .cart-footer { padding: 2rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 1.5rem; }
+        .cart-total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 600; }
+        .cart-total-row span:last-child { color: var(--color-gold); }
+
+        /* --- UPDATED: Advanced Custom Pop-Up Modal with QR Engine --- */
+        .luxury-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 10, 6, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 5000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .luxury-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .luxury-modal-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            width: 92%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 35px 70px var(--glass-shadow);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .luxury-modal-overlay.active .luxury-modal-card {
+            transform: scale(1) translateY(0);
+        }
+        
+        /* Premium Ticket Box Presentation Layout */
+        .qr-ticket-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(214, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .qr-frame {
+            background: #fff;
+            padding: 0.8rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 160px;
+            height: 160px;
+        }
+        .qr-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-code-text {
+            font-family: var(--font-sans);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-gold);
+            letter-spacing: 2px;
+        }
+
+        .scan-instruction {
+            color: var(--color-sage);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        /* --- Global Scroll Reveal --- */
+        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 1.2s cubic-bezier(0.2, 1, 0.3, 1), transform 1.2s cubic-bezier(0.2, 1, 0.3, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- Footer --- */
+        .luxury-footer { padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; color: rgba(141, 163, 144, 0.4); letter-spacing: 1px; }
+
+        @media (max-width: 992px) { .about-grid { grid-template-columns: 1fr; gap: 3rem; } .about-glass-card { padding: 3rem 2rem; } }
+        @media (max-width: 768px) {
+            .mobile-toggle { display: block; }
+            .nav-menu { position: fixed; top: 74px; left: -100%; width: 100%; height: calc(100vh - 74px); background: rgba(12, 20, 14, 0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 4rem 2rem; gap: 2.5rem; transition: left 0.4s ease; }
+            .nav-menu.active { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Luxury Pouring Coffee Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="pour-container">
+            <div class="stream"></div>
+            <div class="cup">
+                <div class="liquid"></div>
+            </div>
+        </div>
+        <h1 class="loader-logo">Pichi's Lounge</h1>
+    </div>
+
+    <!-- Background Decoration -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Pichi's Lounge</a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">Our Story</a>
+                <a href="#menu" class="nav-link">The Menu</a>
+                <button class="nav-cart-btn" id="openCartBtn">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span class="nav-cart-badge" id="cartBadge">0</span>
+                </button>
+            </nav>
+            <button class="mobile-toggle" id="mobileToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Slide-out Shopping Drawer -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Order Selection</h3>
+            <button class="close-cart-btn" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer">
+            <div class="cart-empty" id="cartEmptyState">
+                <i class="fa-solid fa-leaf"></i>
+                <p>Your tray is empty.<br>Browse the menu to add items.</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total-row">
+                <span>Total Amount:</span>
+                <span id="cartTotalSum">₱0.00</span>
+            </div>
+            <button class="btn btn-primary" id="checkoutBtn" style="width:100%; border-radius:12px;" disabled>Submit Lounge Order</button>
+        </div>
+    </div>
+
+    <!-- UPDATED: Custom Pop-Up Modal containing live QR generator engine -->
+    <div class="luxury-modal-overlay" id="customAlertModal">
+        <div class="luxury-modal-card">
+            <h2 style="font-family: var(--font-serif); font-size: 1.8rem; color: #fff; font-weight: 400; margin-bottom: 0.2rem;">✨ Order Processed ✨</h2>
+            <p style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--color-gold); margin-bottom: 1rem;">Digital Receipt Generated</p>
+            
+            <div class="qr-ticket-container">
+                <span class="modal-code-text" id="modalTrackingCode">#4073</span>
+                <div class="qr-frame">
+                    <!-- Dynamic live API QR rendering target -->
+                    <img id="qrImageTarget" src="" alt="Scan receipt ticket">
+                </div>
+            </div>
+            
+            <p class="scan-instruction">Scan the QR code above with your smartphone camera to view your fully designed receipt live on your phone device.</p>
+            
+            <button class="btn btn-primary" id="modalCloseBtn" style="width: 100%; border-radius: 10px; padding: 0.9rem;">
+                Done & Close
+            </button>
+        </div>
+    </div>
+
+    <!-- 1. Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-content reveal">
+            <span class="hero-subtitle">An Elegant Ritual of Taste</span>
+            <h1 class="hero-title">Where Clean Minimalism Meets Luxury Matcha</h1>
+            <p class="hero-description">Experience an ultra-premium, Tokyo-inspired culinary sanctuary designed for refined palates.</p>
+            <div class="hero-actions">
+                <a href="#menu" class="btn btn-primary">Discover The Menu</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-glass-card reveal">
+                <div class="about-grid">
+                    <div class="about-text">
+                        <span class="section-tag">The Sanctuary</span>
+                        <h2 class="section-title">An Aesthetic Haven</h2>
+                        <p>Pichi’s Lounge blends the calm, intentional philosophy of classic Japanese tea rooms with modern, high-end design accents. Every element—from our bespoke ceremonial-grade Uji matcha imports to our curated interior layers—is designed to deliver an elevated, Instagram-worthy experience.</p>
+                        <p class="highlight-text">“Sip slowly, live beautifully.”</p>
+                    </div>
+                    <div class="about-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&q=80&w=800" alt="Luxury Lounge Interior" class="about-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Menu Section -->
+    <section id="menu" class="menu-section">
+        <div class="container">
+            <div class="text-center reveal">
+                <span class="section-tag">Curated Gastronomy</span>
+                <h2 class="section-title">The Seasonal Carte</h2>
+                <p class="section-desc">Handcrafted specialty blends, artisan pasta, and delicate avant-garde desserts.</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="menu-filters reveal">
+                <button class="filter-btn active" data-category="all">All Creations</button>
+                <button class="filter-btn" data-category="drinks">Signature Drinks</button>
+                <button class="filter-btn" data-category="food">Artisan Food</button>
+                <button class="filter-btn" data-category="desserts">Patisserie & Desserts</button>
+            </div>
+
+            <!-- Menu Card Grid -->
+            <div class="menu-grid" id="menuGrid">
+                <!-- Data dynamically populated via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Area -->
+    <footer class="luxury-footer">
+        <p>&copy; 2026 Pichi's Lounge. All Rights Reserved. Crafted for elevated aesthetics.</p>
+    </footer>
+
+    <!-- Interactive Script System Matrix -->
+    <script>
+        const menuDataset = [
+            { id: "u1", name: "Urie 1", category: "drinks", price: 295, tag: "Bespoke Hot", desc: "An elevated Spanish Latte classic. Rich blonde espresso sweetened with velvety condensed milk cream and vanilla bean.", img: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=600" },
+            { id: "t1", name: "Tala 1", category: "drinks", price: 320, tag: "Signature Iced", desc: "Our crown jewel ceremonial Matcha. Pure stone-ground Uji matcha layered beautifully over premium artisan oat milk.", img: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&q=80&w=600" },
+            { id: "u2", name: "Urie 2", category: "drinks", price: 270, tag: "Nitro Latte", desc: "Slow-steeped signature espresso profile paired with light velvety micro-foam crisp layers.", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=600" },
+            { id: "t2", name: "Tala 2", category: "drinks", price: 340, tag: "Matcha Frappe", desc: "Blended ceremonial Uji matcha crystal ice, layered with signature white chocolate drizzle and Madagascar cream vanilla foam.", img: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&q=80&w=600" },
+            
+            { id: "u3", name: "Urie 3", category: "food", price: 460, tag: "Artisan Pasta", desc: "Silky hand-rolled tagliatelle tossed in an intensely aromatic, wild truffle cream reduction, topped with freshly shaved parmesan.", img: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&q=80&w=600" },
+            { id: "t3", name: "Tala 3", category: "food", price: 680, tag: "Luxury Bowl", desc: "Pan-seared A5 Wagyu cubes served over premium Japanese rice, drizzled with sweet truffle shoyu and an organic yolk.", img: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?auto=format&fit=crop&q=80&w=600" },
+            { id: "u4", name: "Urie 4", category: "food", price: 390, tag: "Sando Selection", desc: "Premium toasted Japanese milk bread stuffed with high-grade crisp katsu cutlet and an elegant signature house glaze.", img: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=600" },
+            { id: "t4", name: "Tala 4", category: "food", price: 420, tag: "Matcha Salad", desc: "Crisp seasonal baby greens dressed in an inventive signature stone-ground ceremonial matcha and sesame vinaigrette.", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=600" },
+            
+            { id: "u5", name: "Urie 5", category: "desserts", price: 380, tag: "Delicate Fromage", desc: "A double-layered Tokyo-style cheesecake. Creamy baked spanish vanilla center layered perfectly with light chilled white mousse.", img: "https://images.unsplash.com/photo-1535141192574-5d4897c13636?auto=format&fit=crop&q=80&w=600" },
+            { id: "t5", name: "Tala 5", category: "desserts", price: 240, tag: "Fine Pastry", desc: "Flaky artisan French croissant injected with rich, stone-ground ceremonial Uji matcha ganache, finished with a dust of snow sugar.", img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&q=80&w=600" },
+            { id: "u6", name: "Urie 6", category: "desserts", price: 310, tag: "Artisan Tart", desc: "Crisp vanilla tart shell housing premium Madagascan custard paste, garnished elegantly with gold dust flakes.", img: "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&q=80&w=600" },
+            { id: "t6", name: "Tala 6", category: "desserts", price: 360, tag: "Matcha Affogato", desc: "Velvety home-churned premium matcha bean gelato drowned instantly in a piping hot double shot of rich Urie private blend espresso.", img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=600" }
+        ];
+
+        let cartState = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const preloader = document.getElementById("preloader");
+            const menuGrid = document.getElementById("menuGrid");
+            
+            const cartSidebar = document.getElementById("cartSidebar");
+            const openCartBtn = document.getElementById("openCartBtn");
+            const closeCartBtn = document.getElementById("closeCartBtn");
+            const cartItemsContainer = document.getElementById("cartItemsContainer");
+            const cartEmptyState = document.getElementById("cartEmptyState");
+            const cartBadge = document.getElementById("cartBadge");
+            const cartTotalSum = document.getElementById("cartTotalSum");
+            const checkoutBtn = document.getElementById("checkoutBtn");
+
+            const customAlertModal = document.getElementById("customAlertModal");
+            const modalTrackingCode = document.getElementById("modalTrackingCode");
+            const qrImageTarget = document.getElementById("qrImageTarget");
+            const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+            // 1. Cinematic Pouring Preloader Timeout
+            window.addEventListener("load", () => {
+                setTimeout(() => {
+                    preloader.style.opacity = "0";
+                    setTimeout(() => preloader.style.display = "none", 800);
+                }, 2800);
+            });
+
+            // 2. Render Menu Cards
+            function renderMenu(filter = "all") {
+                menuGrid.innerHTML = "";
+                const filteredData = filter === "all" ? menuDataset : menuDataset.filter(i => i.category === filter);
+                
+                filteredData.forEach(item => {
+                    const card = document.createElement("div");
+                    card.className = "menu-card reveal visible";
+                    card.innerHTML = `
+                        <div class="card-img-container">
+                            <img src="${item.img}" alt="${item.name}" class="menu-item-img">
+                            <span class="item-tag">${item.tag}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-header-row">
+                                <h3 class="item-name">${item.name}</h3>
+                                <span class="item-price">₱${item.price}</span>
+                            </div>
+                            <p class="item-description">${item.desc}</p>
+                            <button class="add-to-tray-btn" data-id="${item.id}">
+                                <i class="fa-solid fa-plus"></i> Add to Selection
+                            </button>
+                        </div>
+                    `;
+                    card.querySelector(".add-to-tray-btn").addEventListener("click", () => addToCart(item.id));
+                    menuGrid.appendChild(card);
+                });
+            }
+
+            // 3. Filters
+            document.querySelectorAll(".filter-btn").forEach(button => {
+                button.addEventListener("click", (e) => {
+                    document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+                    button.classList.add("active");
+                    renderMenu(button.getAttribute("data-category"));
+                });
+            });
+
+            // 4. Cart Logic Systems
+            function addToCart(id) {
+                const checkedItem = menuDataset.find(p => p.id === id);
+                const existingCartItem = cartState.find(c => c.id === id);
+
+                if(existingCartItem) {
+                    existingCartItem.qty += 1;
+                } else {
+                    cartState.push({ ...checkedItem, qty: 1 });
+                }
+                updateCartUI();
+                cartSidebar.classList.add("active");
+            }
+
+            function adjustCartQty(id, scalar) {
+                const targetIdx = cartState.findIndex(c => c.id === id);
+                if(targetIdx === -1) return;
+
+                cartState[targetIdx].qty += scalar;
+                if(cartState[targetIdx].qty <= 0) cartState.splice(targetIdx, 1);
+                updateCartUI();
+            }
+
+            function updateCartUI() {
+                const targetRows = cartItemsContainer.querySelectorAll(".cart-item");
+                targetRows.forEach(r => r.remove());
+
+                if(cartState.length === 0) {
+                    cartEmptyState.style.display = "block";
+                    cartBadge.innerText = "0";
+                    cartTotalSum.innerText = "₱0.00";
+                    checkoutBtn.disabled = true;
+                    return;
+                }
+
+                cartEmptyState.style.display = "none";
+                checkoutBtn.disabled = false;
+                let totalBill = 0;
+                let itemTotalUnits = 0;
+
+                cartState.forEach(item => {
+                    totalBill += (item.price * item.qty);
+                    itemTotalUnits += item.qty;
+
+                    const row = document.createElement("div");
+                    row.className = "cart-item";
+                    row.innerHTML = `
+                        <div class="cart-item-details">
+                            <h4>${item.name}</h4>
+                            <p>₱${item.price * item.qty}</p>
+                        </div>
+                        <div class="cart-item-ctrls">
+                            <button class="cart-ctrl-btn minus-btn"><i class="fa-solid fa-minus"></i></button>
+                            <span>${item.qty}</span>
+                            <button class="cart-ctrl-btn plus-btn"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    `;
+                    row.querySelector(".minus-btn").addEventListener("click", () => adjustCartQty(item.id, -1));
+                    row.querySelector(".plus-btn").addEventListener("click", () => adjustCartQty(item.id, 1));
+                    cartItemsContainer.appendChild(row);
+                });
+
+                cartBadge.innerText = itemTotalUnits;
+                cartTotalSum.innerText = `₱${totalBill.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            }
+
+            openCartBtn.addEventListener("click", () => cartSidebar.classList.add("active"));
+            closeCartBtn.addEventListener("click", () => cartSidebar.classList.remove("active"));
+
+            // 5. Advanced Checkout Optimization Hook containing QR Generator Engine
+            checkoutBtn.addEventListener("click", () => {
+                const ticketNumber = Math.floor(1000 + Math.random() * 9000);
+                modalTrackingCode.innerText = `#${ticketNumber}`;
+                
+                // Construct a beautifully formatted transaction receipt for phone screens
+                let itemsListText = cartState.map(i => `${i.name} (x${i.qty}) - ₱${i.price * i.qty}`).join('%0A');
+                let totalText = cartTotalSum.innerText;
+                
+                // Formulate target data destination text to showcase on smart screens upon camera scanner decoding
+                let rawReceiptData = `✨ PICHI'S LOUNGE RECEIPT ✨%0A------------------------%0ATicket: %23${ticketNumber}%0AItems Ordered:%0A${itemsListText}%0A------------------------%0ATotal Fulfillable: ${totalText}%0A%0AThank you for dining beautifully!`;
+                
+                // Connect live QR layout parameters using a robust cloud endpoint generator
+                let finalQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${rawReceiptData}&color=435b47`;
+                
+                // Inject the generated QR URL into the card image view wrapper target
+                qrImageTarget.src = finalQrUrl;
+                
+                // Reveal the overlay window panel elements structure
+                customAlertModal.classList.add("active");
+                
+                // Clear state layers
+                cartState = [];
+                updateCartUI();
+                cartSidebar.classList.remove("active");
+            });
+
+            modalCloseBtn.addEventListener("click", () => {
+                customAlertModal.classList.remove("active");
+            });
+
+            // 6. Intersection Observer
+            const revealElements = document.querySelectorAll(".reveal");
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add("visible");
+                });
+            }, { threshold: 0.1 });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // Mobile Controls
+            const mobileToggle = document.getElementById("mobileToggle");
+            const navMenu = document.getElementById("navMenu");
+            mobileToggle.addEventListener("click", () => {
+                navMenu.classList.toggle("active");
+                mobileToggle.classList.toggle("open");
+            });
+
+            window.addEventListener("scroll", () => {
+                const navbar = document.querySelector(".navbar");
+                if (window.scrollY > 40) navbar.classList.add("scrolled");
+                else navbar.classList.remove("scrolled");
+            });
+
+            renderMenu();
+        });
+    </script>
+</body>
+</html>
